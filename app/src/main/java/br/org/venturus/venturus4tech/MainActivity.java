@@ -33,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     private void openChatActivity(String nickname) {
