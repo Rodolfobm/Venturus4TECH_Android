@@ -8,6 +8,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+
 public class MainActivity extends AppCompatActivity {
 
     private Button mButton;
@@ -25,11 +28,19 @@ public class MainActivity extends AppCompatActivity {
         mButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String nickText = mNickname.getText().toString();
+                final String nickText = mNickname.getText().toString();
                 if (nickText.isEmpty()) {
                     Log.e("VNT", "Nickname Vazio!!!");
                 } else {
-                    openChatActivity(nickText);
+                    SocketManager.getInstance().getSocket().once(Socket.EVENT_CONNECT, new Emitter.Listener() {
+                        @Override
+                        public void call(Object... args) {
+                            openChatActivity(nickText);
+                        }
+                    });
+
+                    SocketManager.getInstance().getSocket().connect();
+
                 }
             }
         });

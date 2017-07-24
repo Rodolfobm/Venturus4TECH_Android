@@ -6,13 +6,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by vntguca on 12/07/17.
  */
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
-    private String[] mData = {"Oi, tudo bem?", "Nossa, o app tá ficando legal!", "Podemos melhorar mais ainda?", "Alguem tem alguma sugestão???"};
+    private List<JSONObject> mData;
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public View itemView;
@@ -33,6 +39,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
     }
 
     public ChatAdapter() {
+        mData = new ArrayList<>();
     }
 
     // Create new views (invoked by the layout manager)
@@ -49,13 +56,26 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        holder.mMessage.setText(mData[position]);
-
+        try {
+            String username = mData.get(position).getString("author");
+            String msg = mData.get(position).getString("message");
+            String time = mData.get(position).getString("sent");
+            holder.mMessage.setText(msg);
+            holder.mUsername.setText(username);
+            holder.mTime.setText(time);
+            holder.mUserInitial.setText(username.substring(0,1));
+        } catch (JSONException e) {
+            holder.mMessage.setText(e.getMessage());
+        }
     }
 
     @Override
     public int getItemCount() {
-        return mData.length;
+        return mData.size();
     }
 
+    public void addMsg(JSONObject msg) {
+        mData.add(msg);
+        notifyDataSetChanged();
+    }
 }
